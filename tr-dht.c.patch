@@ -1,0 +1,27 @@
+--- J:/T1/DHT-port-tester-021218/dht-transmission-transmission/tr-dht.c.org.c	Sat Feb 10 00:35:14 2018
++++ J:/T1/DHT-port-tester-021218/dht-transmission-transmission/tr-dht.c	Wed Feb 14 17:53:43 2018
+@@ -323,6 +323,7 @@
+     int rc;
+     bool have_id = false;
+     char* dat_file;
++    char* block_this_port;
+     uint8_t* nodes = NULL;
+     uint8_t* nodes6 = NULL;
+     uint8_t const* raw;
+@@ -342,6 +343,16 @@
+         dht_debug = stderr;
+     }
+ 
++    block_this_port = tr_env_key_exists("TR_DHT_BLOCK_THIS_PORT");
++    if (block_this_port != NULL)
++    {
++        blocked_port = strtol(block_this_port, NULL, 0);
++    }
++    else
++    {
++    blocked_port = 0;
++    }
++
+     dat_file = tr_buildPath(ss->configDir, "dht.dat", NULL);
+     rc = tr_variantFromFile(&benc, TR_VARIANT_FMT_BENC, dat_file, NULL) ? 0 : -1;
+     tr_free(dat_file);
