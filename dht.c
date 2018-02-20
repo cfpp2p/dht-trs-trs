@@ -341,7 +341,7 @@ static int token_bucket_tokens;
 
 FILE *dht_debug = NULL;
 
-int blocked_port;
+unsigned short blocked_port;
 
 #ifdef __GNUC__
     __attribute__ ((format (printf, 1, 2)))
@@ -2160,17 +2160,17 @@ dht_periodic(const void *buf, size_t buflen,
             }
             if(implied_port != 0) {
                 if(port != 0) {
-                    debugf("Both port (%d) and implied_port.\n", port);
+                    debugf("Both port (%d) and implied_port.\n", ntohs(port));
                     /* But continue, that's what the spec says. */
                 }
                 switch(from->sa_family) {
                 case AF_INET:
                     port = htons(((struct sockaddr_in*)from)->sin_port);
-                    debugf("Announce_peer: AF_INET implied_port %d.\n", port);
+                    debugf("Announce_peer: AF_INET implied_port %d.\n", ntohs(port));
                     break;
                 case AF_INET6:
                     port = htons(((struct sockaddr_in6*)from)->sin6_port);
-                    debugf("Announce_peer: AF_INET6 implied_port %d.\n", port);
+                    debugf("Announce_peer: AF_INET6 implied_port %d.\n", ntohs(port));
                     break;
                 default:
                     port = 0;
@@ -2185,8 +2185,8 @@ dht_periodic(const void *buf, size_t buflen,
                 break;
             }
 
-            if(port == blocked_port) {
-                debugf("Blocked port %d (environment setting TR_DHT_BLOCK_THIS_PORT).\n", port);
+            if(port == htons(blocked_port)) {
+                debugf("Blocked port %d (environment setting TR_DHT_BLOCK_THIS_PORT).\n", ntohs(port));
                 send_error(from, fromlen, tid, tid_len,
                            203, "Announce_peer with forbidden port number");
                 port = 0;
